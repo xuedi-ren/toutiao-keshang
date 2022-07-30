@@ -7,7 +7,7 @@
 <script>
 import axios from '@/utils/request'
 export default {
-  created () {
+  created() {
     console.dir(axios)
   }
 }
