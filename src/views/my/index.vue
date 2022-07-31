@@ -1,5 +1,5 @@
 <template>
-  <div>俺是profile</div>
+  <div>俺是我的</div>
 </template>
 
 <script>

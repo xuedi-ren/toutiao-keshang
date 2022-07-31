@@ -62,20 +62,22 @@ export default {
     }
   },
   methods: {
-    loading () {
+    loading() {
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
         loadingType: 'spinner'
       })
     },
-    async onSubmit () {
+    async onSubmit() {
       try {
         this.loading()
-        const { data: { data } } = await login(this.mobile, this.code)
+        const {
+          data: { data }
+        } = await login(this.mobile, this.code)
         console.log(data)
         this.$store.commit('SET_TOKEN', data)
-        this.$router.push('/layout/profile')
+        this.$router.push('/ ')
         this.$toast.success('登录成功')
       } catch (error) {
         // 细分失败
@@ -88,7 +90,7 @@ export default {
         this.$toast.fail(message)
       }
     },
-    sendCode () {
+    sendCode() {
       this.$refs.inp.validate('mobile').then(async () => {
         this.loading()
         try {
