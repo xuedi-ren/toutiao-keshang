@@ -1,6 +1,8 @@
 <template>
   <div>
-    <van-pull-refresh v-model="refreshing" @refresh="loadNextPageArticle">
+    <van-pull-refresh
+     v-model="refreshing"
+     @refresh="loadNextPageArticle">
       <van-list
         @load="loadNextPageArticle"
         offset="0"
@@ -68,8 +70,10 @@ export default {
           this.finished = true
         }
         if (this.refreshing) {
+          // 下拉刷新数据
           this.articles.unshift(...data.data.results)
         } else {
+          // 滚动获取更多
           this.articles.push(...data.data.results)
         }
         // 更新时间戳

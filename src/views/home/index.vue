@@ -8,28 +8,38 @@
     </van-nav-bar>
     <!-- ! tab -->
     <van-tabs v-model="active" swipeable>
-      <van-tab v-for="obj in Channels" :key="obj.id" :title="obj.name"
-        >
+      <van-tab v-for="obj in Channels" :key="obj.id" :title="obj.name">
         <articleList :id="obj.id"></articleList>
-        </van-tab
-      >
-      <span class="toutiao toutiao-gengduo1"></span>
+      </van-tab>
+      <span class="toutiao toutiao-gengduo1" @click="show = true"></span>
     </van-tabs>
-    <!-- ! 文章 -->
+    <!-- ! 频道弹层 -->
+    <van-popup
+      v-model="show"
+      position="bottom"
+      :style="{ height: '100%' }"
+      closeable
+      close-icon-position="top-left"
+    >
+      <ChannelPopup></ChannelPopup>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getMyChannel as getMyChannelAPI } from '@/api/index'
 import articleList from './components/articleList.vue'
+import ChannelPopup from '@/components/ChannelPopup.vue'
 export default {
   components: {
-    articleList
+    articleList,
+    ChannelPopup
   },
   data() {
     return {
       active: 0,
-      Channels: []
+      Channels: [],
+      show: false
     }
   },
   created() {
@@ -115,6 +125,7 @@ export default {
   position: fixed;
   top: 92px;
   right: 0;
+  z-index: 999;
 
   &::after {
     content: '';
