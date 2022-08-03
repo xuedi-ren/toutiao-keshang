@@ -8,35 +8,89 @@
     </van-cell>
     <van-grid gutter="0.2rem">
       <van-grid-item
-        v-for="value in 9"
-        :key="value"
-        text="文字"
-        class="mychannel"
+        v-for="(item, index) in myChannels"
+        :key="item.id"
+        :text="item.name"
+        :class="['mychannel', { active: item.name === '推荐' }]"
+        @click="changeActive(index, item)"
       >
         <template #icon>
-          <van-icon name="cross" v-show="isedit" />
+          <van-icon name="cross" v-show="isedit && item.name !== '推荐'" />
         </template>
       </van-grid-item>
     </van-grid>
     <!-- ! 推荐频道 -->
     <van-cell title="推荐频道"> </van-cell>
     <van-grid gutter="0.2rem" direction="horizontal">
-      <van-grid-item v-for="value in 12" :key="value" text="文字" icon="plus" />
+      <van-grid-item
+        v-for="item in recommendChannels"
+        :key="item.id"
+        :text="item.name"
+        icon="plus"
+      />
     </van-grid>
   </div>
 </template>
 
 <script>
+import { getAllChannel as getAllChannelAPI } from '@/api'
 export default {
+  props: {
+    myChannels: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
-      isedit: false
+      isedit: false,
+      allChannels: []
+    }
+  },
+  created() {
+    this.getAllChannel()
+  },
+  methods: {
+    // 请求所有频道
+    async getAllChannel() {
+      try {
+        const { data } = await getAllChannelAPI()
+        this.allChannels = data.data.channels
+      } catch (error) {
+        this.$toast.fail('请刷新后重新获取频道')
+      }
+    },
+    changeActive(index, item) {
+      console.log(index)
+      // 判断是否是编辑状态
+      if (this.isedit) {
+        // 是编辑状态 删除
+        if (item.name === '推荐') return
+        this.$emit('del-channel', item.id)
+      } else {
+        // 不是编辑状态 关闭弹窗 切换active
+        this.$parent.$parent.show = false
+        this.$emit('change-active', index)
+      }
+    }
+  },
+  computed: {
+    recommendChannels() {
+      return this.allChannels.filter((obj) => {
+        return !this.myChannels.find((obj1) => obj1.id === obj.id)
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+.active {
+  color: red;
+  :deep(.van-grid-item__text) {
+    color: red;
+  }
+}
 .channel {
   padding-top: 1.33333rem;
 

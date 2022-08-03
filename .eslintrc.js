@@ -17,6 +17,7 @@ module.exports = {
     'space-before-function-paren': 'off',
     'comma-dangle': 'off',
     'vue/no-multiple-template-root': 'off',
+    'no-useless-return': 'off',
 
   }
 }
