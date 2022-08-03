@@ -27,6 +27,7 @@
         :key="item.id"
         :text="item.name"
         icon="plus"
+        @click="$emit('add-channel', item)"
       />
     </van-grid>
   </div>

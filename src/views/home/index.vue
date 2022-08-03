@@ -25,13 +25,20 @@
         :myChannels="Channels"
         @change-active="active = $event"
         @del-channel="delChannel"
+        @add-channel="addChannel"
       ></ChannelPopup>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { getMyChannel as getMyChannelAPI, delChannel } from '@/api'
+import {
+  getMyChannel as getMyChannelAPI,
+  delChannel,
+  addChannel,
+  setMyChannelsToLocal,
+  getMyChannelsToLocal
+} from '@/api'
 import articleList from './components/articleList.vue'
 import ChannelPopup from '@/components/ChannelPopup.vue'
 export default {
@@ -47,13 +54,30 @@ export default {
     }
   },
   created() {
-    this.getMyChannel()
+    this.initMyChannels()
+  },
+  computed: {
+    isLogin() {
+      return !!this.$store.state.tokenObj.token
+    }
   },
   methods: {
+    initMyChannels() {
+      if (this.isLogin) {
+        this.getMyChannel()
+      } else {
+        console.log(getMyChannelsToLocal())
+        const myLocalChannels = getMyChannelsToLocal()
+        if (myLocalChannels) {
+          this.Channels = myLocalChannels
+        } else {
+          this.getMyChannel()
+        }
+      }
+    },
     async getMyChannel() {
       try {
         const { data } = await getMyChannelAPI()
-        console.log(data.data.channels)
         this.Channels = data.data.channels
       } catch (error) {
         console.log(error.message)
@@ -62,11 +86,42 @@ export default {
     },
     // 删除频道列表
     async delChannel(id) {
-      // 删除服务器数据
-      const { data } = await delChannel(id)
-      console.log(data)
-      // 删除页面上的数据
-      this.Channels = this.Channels.filter((obj) => obj.id !== id)
+      this.$toast.loading({
+        message: '删除数据中...',
+        forbidClick: true
+      })
+      if (this.isLogin) {
+        // 删除服务器数据
+        await delChannel(id)
+      } else {
+        setMyChannelsToLocal(this.Channels.filter((obj) => obj.id !== id))
+      }
+      try {
+        // 删除页面上的数据
+        this.Channels = this.Channels.filter((obj) => obj.id !== id)
+        this.$toast.success('删除数据成功')
+      } catch (error) {
+        this.$toast.fail('删除数据失败')
+      }
+    },
+    async addChannel(channel) {
+      this.$toast.loading({
+        message: '添加数据中...',
+        forbidClick: true
+      })
+      if (this.isLogin) {
+        // 添加线上
+        await addChannel(channel.id, this.Channels.length)
+      } else {
+        getMyChannelsToLocal(this.Channels.push(channel))
+      }
+      try {
+        // 添加视图
+        this.Channels.push(channel)
+        this.$toast.success('添加数据成功')
+      } catch (error) {
+        this.$toast.fail('添加数据失败')
+      }
     }
   }
 }
