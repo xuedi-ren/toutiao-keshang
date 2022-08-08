@@ -6,3 +6,10 @@ export const getSearchSuggestionsAPI = (q) => {
     params: { q }
   })
 }
+
+export const getSearchResultAPI = params => {
+  return request({
+    url: '/v1_0/search',
+    params
+  })
+}

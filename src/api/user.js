@@ -32,3 +32,33 @@ export const uploadAvator = (file) => {
     data: fm
   })
 }
+
+export const uploadUserInfoAPI = (name) => {
+  return request({
+    url: '/v1_0/user/profile',
+    method: 'PATCH',
+    data: {
+      name
+    }
+  })
+}
+
+export const uploadUserGenderAPI = (gender) => {
+  return request({
+    url: '/v1_0/user/profile',
+    method: 'PATCH',
+    data: {
+      gender
+    }
+  })
+}
+
+export const uploadUserBirthdayAPI = (birthday) => {
+  return request({
+    url: '/v1_0/user/profile',
+    method: 'PATCH',
+    data: {
+      birthday
+    }
+  })
+}

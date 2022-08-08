@@ -1,11 +1,13 @@
 <template>
   <div>
     <van-cell
-      v-for="(item, index) in suggestions"
-      :key="index"
-      :title="item"
+     v-for="(item, index) in suggestions"
+     :key="index"
       icon="search"
-    />
+      @click="$emit('search', item)"
+      >
+      <div v-html="hightLight(item)"></div>
+    </van-cell>
   </div>
 </template>
 
@@ -36,11 +38,18 @@ export default {
     getSearchSuggestion: debounce(async function () {
       try {
         const { data } = await getSearchSuggestionsAPI(this.keywords)
-        this.suggestions = data.data.options
+        this.suggestions = data.data.options.filter((obj) => {
+          return Boolean(obj)
+        })
       } catch (error) {
         this.$toast.fail('获取搜索建议失败')
       }
-    }, 500)
+    }, 500),
+    hightLight(text) {
+      const res = `<span style="color: red">${this.keywords}</span>`
+      const reg = new RegExp(this.keywords, 'gi')
+      return text.replace(reg, res)
+    }
   }
 }
 </script>

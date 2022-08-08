@@ -18,6 +18,8 @@ module.exports = {
     'comma-dangle': 'off',
     'vue/no-multiple-template-root': 'off',
     'no-useless-return': 'off',
+    'vue/no-mutating-props': 'off',
+    'no-constant-condition': 'off',
 
   }
 }

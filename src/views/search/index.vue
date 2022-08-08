@@ -15,7 +15,15 @@
     <!-- <SearchSuggestion></SearchSuggestion>
     <SearchResult></SearchResult>
     <SearchHistory></SearchHistory> -->
-    <component :is="componentName" :keywords="keywords"></component>
+    <div class="container">
+      <component
+        :is="componentName"
+        :keywords="keywords"
+        @search="onSearch"
+        :searchHistorys="searchHistorys"
+        @delAll="searchHistorys = []"
+      ></component>
+    </div>
   </div>
 </template>
 
@@ -23,6 +31,7 @@
 import SearchSuggestion from './components/SearchSuggestion.vue'
 import SearchHistory from './components/SearchHistory.vue'
 import SearchResult from './components/SearchResult.vue'
+import Storage from '@/utils/storage'
 export default {
   name: 'Search',
   components: {
@@ -33,7 +42,8 @@ export default {
   data() {
     return {
       keywords: '',
-      isShowSearchRensult: false
+      isShowSearchRensult: false,
+      searchHistorys: Storage.get('TOUTIAO_SEARCH_HISTORY') || []
     }
   },
   computed: {
@@ -48,12 +58,24 @@ export default {
     }
   },
   methods: {
-    onSearch() {
-      console.log('小啊giao')
+    onSearch(value) {
+      this.keywords = value
+      // 判断搜索历史是否重复
+      const index = this.searchHistorys.indexOf(value)
+      if (index !== -1) {
+        this.searchHistorys.splice(index, 1)
+      }
+      this.searchHistorys.unshift(value)
+      // 展示搜索结果
       this.isShowSearchRensult = true
     },
     onSearchFocus() {
       this.isShowSearchRensult = false
+    }
+  },
+  watch: {
+    searchHistorys(value) {
+      Storage.set('TOUTIAO_SEARCH_HISTORY', value)
     }
   }
 }
@@ -64,5 +86,13 @@ export default {
   [role='button'] {
     color: #fff;
   }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+.container {
+  padding-top: 108px;
 }
 </style>
