@@ -9,6 +9,7 @@
       error-text="请求失败，点击重新加载"
     >
       <van-cell
+      @click="articleDetails(obj.art_id)"
         v-for="obj in resultsList"
         :key="obj.art_id"
         :title="obj.title"
@@ -56,6 +57,14 @@ export default {
         this.error = true
         this.loading = false
       }
+    },
+    articleDetails(id) {
+      this.$router.push({
+        path: '/details',
+        query: {
+          id,
+        }
+      })
     }
   }
 }
